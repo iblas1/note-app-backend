@@ -8,7 +8,7 @@ routes.get("/", (request, response) => {
   });
 });
 
-routes.get("/:id", (request, response) => {
+routes.get("/:id", (request, response, next) => {
   const id = request.params.id;
   Note.findById(id)
     .then((note) => {
@@ -19,15 +19,9 @@ routes.get("/:id", (request, response) => {
       }
     })
     .catch((err) => {
-      console.log(err);
-      response.status(400).send({ error: "malformated id" });
+      next(err);
     });
 });
-
-// const generateId = () => {
-//   const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
-//   return maxId + 1;
-// };
 
 routes.post("/", (request, response) => {
   const body = request.body;
@@ -43,20 +37,25 @@ routes.post("/", (request, response) => {
     important: body.important || false,
     date: new Date(),
   });
-  // const note = {
-  //   content: body.content,
-  //   important: body.important || false,
-  //   date: new Date(),
-  //   id: generateId(),
-  // };
 
-  // notes = notes.concat(note);
   note.save().then((savedNote) => response.json(savedNote));
 });
 
+routes.put("/:id", (request, response, next) => {
+  const id = request.params.id;
+  const changedNote = request.body;
+  Note.findByIdAndUpdate(id, changedNote, { new: true })
+    .then((res) => {
+      response.json(res);
+    })
+    .catch((err) => {
+      next(err);
+    });
+});
+
 routes.delete("/:id", (request, response) => {
-  const id = Number(request.params.id);
-  notes = notes.filter((note) => note.id !== id);
+  const id = request.params.id;
+  Note.findByIdAndRemove(id).then((res) => response.status(202));
 
   response.status(204).end();
 });

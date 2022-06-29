@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
-const url = process.env.NOTEMONGODB_URI;
-console.log("connecting to", url);
+// const url = process.env.NOTEMONGODB_URI;
+// console.log("connecting to", url);
 
-mongoose
-  .connect(url)
-  .then((res) => console.log("connected to mongoDB"))
-  .catch((err) => console.log("error connecting", err.message));
+// mongoose
+//   .connect(url)
+//   .then((res) => console.log("connected to mongoDB"))
+//   .catch((err) => console.log("error connecting", err.message));
 const Schema = mongoose.Schema({
   content: String,
   date: Date,
